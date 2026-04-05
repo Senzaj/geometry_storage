@@ -6,4 +6,15 @@ set(CMAKE_CXX_STANDARD 26)
 add_executable(C_MAIN src/main.cpp
         src/Random/RandomGenerator.cpp
         src/Random/RandomGenerator.h
+        src/Shapes/Shape.cpp
+        src/Shapes/Shape.h
+        src/Shapes/ShapeType.h
+        src/Shapes/Circle.cpp
+        src/Shapes/Circle.h
+        src/Calculator/Calculator.cpp
+        src/Calculator/Calculator.h
+        src/Calculator/AreaCalculator.cpp
+        src/Calculator/AreaCalculator.h
+        src/Calculator/PerimeterCalculator.cpp
+        src/Calculator/PerimeterCalculator.h
 )

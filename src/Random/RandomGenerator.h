@@ -1,5 +1,4 @@
 #pragma once
-#define CPP_LEARNING_RANDOMGENERATOR_H
 
 class RandomGenerator {
 public:
