@@ -1,15 +1,11 @@
 #pragma once
-#include "ShapeType.h"
 
 class Shape {
 public:
-    explicit Shape(ShapeType type);
-    ShapeType getType() const;
     virtual ~Shape() = default;
-    virtual double getArea();
-    virtual double getPerimeter();
+    virtual double accept(class Calculator& calc) const;
 protected:
-    ShapeType type;
+    explicit Shape();
     double area;
     double perimeter;
 };

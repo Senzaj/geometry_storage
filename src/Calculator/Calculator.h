@@ -1,7 +1,10 @@
 #pragma once
 
-static class Calculator {
+class Circle;
+
+class Calculator {
 public:
-    virtual  double compute();
+    virtual double visit(const Circle& circle) = 0;
+    virtual ~Calculator() = default;
 };
 

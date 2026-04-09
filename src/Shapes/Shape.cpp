@@ -1,9 +1,10 @@
+
+
 #include "Shape.h"
 
-Shape::Shape(ShapeType type) {
-    this->type = type;
-};
+Shape::Shape() {
+}
 
-ShapeType Shape::getType() const {return type;}
-
-
+double Shape::accept(class Calculator &calc) const {
+    
+}

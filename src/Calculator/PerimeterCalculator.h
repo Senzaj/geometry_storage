@@ -1,6 +1,7 @@
 #pragma once
+#include "Calculator.h"
 
-class PerimeterCalculator {
+class PerimeterCalculator: public Calculator {
 
 };
 
