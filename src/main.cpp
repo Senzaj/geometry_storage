@@ -11,6 +11,12 @@ int main() {
     double radius = 4;
     double width = 5;
     double height = 6;
+
+    double* ptr = &radius;
+    double* (&dbl_ptr) = ptr;
+    double* (&dbl_ptr_snd) = dbl_ptr;
+    std::cout << dbl_ptr_snd << std::endl;
+
     std::unique_ptr<Circle> circle = std::make_unique<Circle>(radius);
     std::unique_ptr<Rectangle> rectangle = std::make_unique<Rectangle>(width, height);
     circle->accept(*areaCalc);
