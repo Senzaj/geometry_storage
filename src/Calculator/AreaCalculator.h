@@ -3,5 +3,6 @@
 
 class AreaCalculator: public Calculator {
 public:
-    double visit(const Circle& circle) override;
+    double visit( Circle* circle) override;
+    double visit( Rectangle* rectangle) override;
 };

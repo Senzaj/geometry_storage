@@ -1,10 +1,12 @@
 #pragma once
 
 class Circle;
+class Rectangle;
 
 class Calculator {
 public:
-    virtual double visit(const Circle& circle) = 0;
+    virtual double visit( Circle* circle) = 0;
+    virtual double visit( Rectangle* rectangle) = 0;
     virtual ~Calculator() = default;
 };
 
