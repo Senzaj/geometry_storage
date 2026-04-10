@@ -1,9 +1,10 @@
 #include "Circle.h"
-#include "../Calculator/Calculator.h"
 
-Circle::Circle(double radius){
+Circle::Circle(double radius, AreaCalculator* areaCalculator, PerimeterCalculator* perimeterCalculator) {
     this->radius = radius;
-};
+    Circle::setPerimeter(Circle::accept(*perimeterCalculator));
+    Circle::setArea(Circle::accept(*areaCalculator));
+}
 
 double Circle::accept(Calculator& calc) {
     return calc.visit(this);

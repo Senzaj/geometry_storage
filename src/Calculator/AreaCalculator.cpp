@@ -1,10 +1,11 @@
 #include "AreaCalculator.h"
 #include "../Shapes/Circle.h"
-#include "cmath"
 #include "../Shapes/Rectangle.h"
+#include "../shapes/Triangle.h"
+#include <cmath>
 
 double AreaCalculator::visit(Circle* circle) {
-    const double area = 3.14 * std::pow(circle->getRadius(), 2);
+    const double area = M_PI * std::pow(circle->getRadius(), 2);
     circle->setArea(area);
     return area;
 }
@@ -16,7 +17,8 @@ double AreaCalculator::visit(Rectangle* rectangle) {
 }
 
 double AreaCalculator::visit(Triangle* triangle) {
-    //calculate half perimeter
-    //calculate area
+    const double hp = triangle->getPerimeter()/2;
+    const double area = std::sqrt(hp * (hp - triangle->getASide())*(hp - triangle->getBSide())*(hp - triangle->getCSide()));
+    return area;
 }
 
