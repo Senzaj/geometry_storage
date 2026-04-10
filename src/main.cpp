@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "Calculator/AreaCalculator.h"
+#include "Calculator/PerimeterCalculator.h"
 #include "Shapes/Circle.h"
 #include "Shapes/Rectangle.h"
 #include "Shapes/Triangle.h"

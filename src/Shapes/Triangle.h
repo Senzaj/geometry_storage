@@ -10,7 +10,7 @@ public:
     [[nodiscard("no usage")]] double getASide() const;
     [[nodiscard("no usage")]] double getBSide() const;
     [[nodiscard("no usage")]] double getCSide() const;
-    double accept(Calculator &calc) override;
+    void accept(Calculator &calc) override;
 private:
     double aSide;
     double bSide;
