@@ -15,3 +15,8 @@ double AreaCalculator::visit(Rectangle* rectangle) {
     return area;
 }
 
+double AreaCalculator::visit(Triangle* triangle) {
+    //calculate half perimeter
+    //calculate area
+}
+

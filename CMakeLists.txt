@@ -18,4 +18,6 @@ add_executable(C_MAIN src/main.cpp
         src/Calculator/Calculator.cpp
         src/Shapes/Rectangle.cpp
         src/Shapes/Rectangle.h
+        src/Shapes/Triangle.cpp
+        src/Shapes/Triangle.h
 )

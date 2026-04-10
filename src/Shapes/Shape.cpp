@@ -1,6 +1,7 @@
 #include "Shape.h"
 
 Shape::Shape() {}
+
 double Shape::accept(Calculator &calc){}
 
 void Shape::setArea(double area) {

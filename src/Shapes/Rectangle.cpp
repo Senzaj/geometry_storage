@@ -1,6 +1,4 @@
-
 #include "Rectangle.h"
-
 #include "../Calculator/Calculator.h"
 
 Rectangle::Rectangle(double width, double height) {
