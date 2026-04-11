@@ -20,4 +20,8 @@ add_executable(C_MAIN src/main.cpp
         src/Shapes/Rectangle.h
         src/Shapes/Triangle.cpp
         src/Shapes/Triangle.h
+        src/Libs/sqlite3.h
+        src/Libs/sqlite3.c
+        src/DatabaseManager/DatabaseManager.cpp
+        src/DatabaseManager/DatabaseManager.h
 )

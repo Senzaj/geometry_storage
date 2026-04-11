@@ -1,21 +1,58 @@
 #include <format>
 #include <iostream>
 #include <memory>
+#include <vector>
 
 #include "Calculator/AreaCalculator.h"
 #include "Calculator/PerimeterCalculator.h"
+#include "Libs/sqlite3.h"
 #include "Shapes/Circle.h"
 #include "Shapes/Rectangle.h"
 #include "Shapes/Triangle.h"
 
-void testFunction();
+std::vector<std::unique_ptr<Shape>> initFigures();
+void testSqlite3(Circle* circle, Rectangle* rectangle, Triangle* triangle);
+void printFiguresParams(Circle* circle, Rectangle* rectangle, Triangle* triangle);
 
 int main() {
-    testFunction();
+    std::vector<std::unique_ptr<Shape>> shapes = initFigures();
+    testSqlite3(dynamic_cast<Circle*>(&*shapes[0]),
+        dynamic_cast<Rectangle*>(&*shapes[1]),
+        dynamic_cast<Triangle*>(&*shapes[2]));
     return 0;
 }
 
-void testFunction() {
+void testSqlite3(Circle* circle, Rectangle* rectangle, Triangle* triangle) {
+    sqlite3 *db;
+    char *err_msg = nullptr;
+    int db_rc = sqlite3_open("figures.db", &db);
+
+    if (db_rc != SQLITE_OK) {
+        sqlite3_close(db);
+        return;
+    }
+
+    char *sql = "DROP TABLE IF EXISTS figures;"
+                "CREATE TABLE figures(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                "type TEXT NOT NULL,"
+                "param1 REAL,"
+                "param2 REAL,"
+                "param3 REAL);";
+
+    db_rc = sqlite3_exec(db, sql, nullptr, nullptr, &err_msg);
+    if (db_rc != SQLITE_OK) {
+        printf("SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);
+        sqlite3_close(db);
+        return;
+    }
+
+    sqlite3_close(db);
+    printf("Table created\n");
+    printFiguresParams(circle, rectangle, triangle);
+}
+
+std::vector<std::unique_ptr<Shape>> initFigures() {
     std::unique_ptr<AreaCalculator> areaCalc = std::make_unique<AreaCalculator>();
     std::unique_ptr<PerimeterCalculator> perimeterCalc = std::make_unique<PerimeterCalculator>();
 
@@ -26,22 +63,27 @@ void testFunction() {
     double b = 4;
     double c = 5;
 
-#if 0
-    double* ptr = &radius;
-    double* (&dbl_ptr) = ptr;
-    double* (&dbl_ptr_snd) = dbl_ptr;
-    std::cout << dbl_ptr_snd << std::endl;
-#endif
+    std::vector<std::unique_ptr<Shape>> shapes;
 
     std::unique_ptr<Circle> circle = std::make_unique<Circle>(radius, &*areaCalc, &*perimeterCalc);
     std::unique_ptr<Rectangle> rectangle = std::make_unique<Rectangle>(width, height, &*areaCalc, &*perimeterCalc);
     std::unique_ptr<Triangle> triangle = std::make_unique<Triangle>(a, b, c, &*areaCalc, &*perimeterCalc);
 
+    shapes.push_back(std::move(circle));
+    shapes.push_back(std::move(rectangle));
+    shapes.push_back(std::move(triangle));
+
+    return shapes;
+}
+
+void printFiguresParams(Circle* circle, Rectangle* rectangle, Triangle* triangle) {
+    std::cout << std::endl << "FIGURES PERIMETER:" << std::endl;
     std::cout << "Circle perimeter = " << std::format("{:.2f}", circle->getPerimeter()) << std::endl;
     std::cout << "Rectangle perimeter = " << std::format("{:.2f}", rectangle->getPerimeter()) << std::endl;
     std::cout << "Triangle perimeter = " << std::format("{:.2f}", triangle->getPerimeter()) << std::endl;
-    std::cout << std::endl;
+    std::cout << std::endl << "FIGURES AREA:" << std::endl;
     std::cout << "Circle area = " << std::format("{:.2f}", circle->getArea()) << std::endl;
     std::cout << "Rectangle area = " << std::format("{:.2f}", rectangle->getArea()) << std::endl;
-    std::cout << "Triangle area = " << std::format("{:.2f}", triangle->getArea());
+    std::cout << "Triangle area = " << std::format("{:.2f}", triangle->getArea()) << std::endl;
+    std::cout << std::endl;
 }
