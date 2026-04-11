@@ -10,12 +10,12 @@
 #include "Shapes/Rectangle.h"
 #include "Shapes/Triangle.h"
 
-std::vector<std::unique_ptr<Shape>> initFigures();
+std::vector<std::shared_ptr<Shape>> initFigures();
 void testSqlite3(Circle* circle, Rectangle* rectangle, Triangle* triangle);
 void printFiguresParams(Circle* circle, Rectangle* rectangle, Triangle* triangle);
 
 int main() {
-    std::vector<std::unique_ptr<Shape>> shapes = initFigures();
+    std::vector<std::shared_ptr<Shape>> shapes = initFigures();
     testSqlite3(dynamic_cast<Circle*>(&*shapes[0]),
         dynamic_cast<Rectangle*>(&*shapes[1]),
         dynamic_cast<Triangle*>(&*shapes[2]));
@@ -52,7 +52,7 @@ void testSqlite3(Circle* circle, Rectangle* rectangle, Triangle* triangle) {
     printFiguresParams(circle, rectangle, triangle);
 }
 
-std::vector<std::unique_ptr<Shape>> initFigures() {
+std::vector<std::shared_ptr<Shape>> initFigures() {
     std::unique_ptr<AreaCalculator> areaCalc = std::make_unique<AreaCalculator>();
     std::unique_ptr<PerimeterCalculator> perimeterCalc = std::make_unique<PerimeterCalculator>();
 
@@ -63,16 +63,17 @@ std::vector<std::unique_ptr<Shape>> initFigures() {
     double b = 4;
     double c = 5;
 
-    std::vector<std::unique_ptr<Shape>> shapes;
+    std::vector<std::shared_ptr<Shape>> shapes;
 
-    std::unique_ptr<Circle> circle = std::make_unique<Circle>(radius, &*areaCalc, &*perimeterCalc);
-    std::unique_ptr<Rectangle> rectangle = std::make_unique<Rectangle>(width, height, &*areaCalc, &*perimeterCalc);
-    std::unique_ptr<Triangle> triangle = std::make_unique<Triangle>(a, b, c, &*areaCalc, &*perimeterCalc);
+    auto circle = std::make_shared<Circle>(radius, &*areaCalc, &*perimeterCalc);
+    auto rectangle = std::make_shared<Rectangle>(width, height, &*areaCalc, &*perimeterCalc);
+    auto triangle = std::make_shared<Triangle>(a, b, c, &*areaCalc, &*perimeterCalc);
 
-    shapes.push_back(std::move(circle));
-    shapes.push_back(std::move(rectangle));
-    shapes.push_back(std::move(triangle));
+    shapes.push_back(circle);
+    shapes.push_back(rectangle);
+    shapes.push_back(triangle);
 
+    printFiguresParams(&*circle, &*rectangle, &*triangle);
     return shapes;
 }
 
