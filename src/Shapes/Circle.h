@@ -6,8 +6,11 @@
 class Circle: public Shape {
     public:
         explicit Circle(double radius, AreaCalculator* areaCalculator, PerimeterCalculator* perimeterCalculator);
-        [[nodiscard("No usage")]] double getRadius() const;
+
         void accept(Calculator &calc) override;
+
+        [[nodiscard("No usage")]] ShapeType getType() const override;
+        [[nodiscard("No usage")]] double getRadius() const;
     private:
         double radius;
 };

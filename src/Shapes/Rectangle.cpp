@@ -26,3 +26,7 @@ double Rectangle::getHeight() const {
 void Rectangle::accept(Calculator &calc)  {
     calc.visit(this);
 }
+
+ShapeType Rectangle::getType() const {
+    return ShapeType::Rectangle;
+}

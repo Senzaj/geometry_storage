@@ -14,4 +14,8 @@ void Circle::accept(Calculator& calc) {
     calc.visit(this);
 }
 
+ShapeType Circle::getType() const {
+    return ShapeType::Circle;
+}
+
 double Circle::getRadius() const {return radius;};

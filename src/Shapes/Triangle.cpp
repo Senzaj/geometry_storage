@@ -28,3 +28,7 @@ double Triangle::getCSide() const {
 void Triangle::accept(Calculator &calc) {
     calc.visit(this);
 }
+
+ShapeType Triangle::getType() const {
+    return ShapeType::Triangle;
+}
