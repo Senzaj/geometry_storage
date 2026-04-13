@@ -26,4 +26,6 @@ add_executable(C_MAIN src/main.cpp
         src/DatabaseManager/DatabaseManager.h
         src/ShapeType/ShapeType.cpp
         src/ShapeType/ShapeType.h
+        src/Factory/ShapeFactory.cpp
+        src/Factory/ShapeFactory.h
 )

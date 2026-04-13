@@ -5,7 +5,8 @@
 
 class Circle: public Shape {
     public:
-        explicit Circle(double radius, AreaCalculator* areaCalculator, PerimeterCalculator* perimeterCalculator);
+        explicit Circle(int id, double radius, AreaCalculator* areaCalculator, PerimeterCalculator* perimeterCalculator);
+        explicit Circle(int id, double radius, double area, double perimeter);
 
         void accept(Calculator &calc) override;
 

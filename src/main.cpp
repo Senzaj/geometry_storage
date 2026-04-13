@@ -25,12 +25,13 @@ std::vector<std::shared_ptr<Shape>> initFigures() {
     double a = 3;
     double b = 4;
     double c = 5;
+    int id = 0;
 
     std::vector<std::shared_ptr<Shape>> shapes;
 
-    auto circle = std::make_shared<Circle>(radius, &*areaCalc, &*perimeterCalc);
-    auto rectangle = std::make_shared<Rectangle>(width, height, &*areaCalc, &*perimeterCalc);
-    auto triangle = std::make_shared<Triangle>(a, b, c, &*areaCalc, &*perimeterCalc);
+    auto circle = std::make_shared<Circle>(id++,radius, &*areaCalc, &*perimeterCalc);
+    auto rectangle = std::make_shared<Rectangle>(id++, width, height, &*areaCalc, &*perimeterCalc);
+    auto triangle = std::make_shared<Triangle>(id++, a, b, c, &*areaCalc, &*perimeterCalc);
 
     shapes.push_back(circle);
     shapes.push_back(rectangle);

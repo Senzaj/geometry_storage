@@ -4,10 +4,12 @@
 #include "../Shapes/Rectangle.h"
 #include "../Shapes/Triangle.h"
 
-DatabaseManager::DatabaseManager(const std::string& fileName) : db{nullptr} {
+DatabaseManager::DatabaseManager(const std::string& fileName, ShapeFactory* shapeFactory) : db{nullptr} {
     int rc = sqlite3_open(fileName.c_str(), &db);
     if (rc != SQLITE_OK)
         std::cerr << "Cannot open database: " << sqlite3_errmsg(db) << std::endl;
+
+    this->shapeFactory = shapeFactory;
 }
 
 DatabaseManager::~DatabaseManager() {
@@ -27,6 +29,30 @@ bool DatabaseManager::executeQuery(const std::string &sql) {
     return true;
 }
 
+std::shared_ptr<Shape> DatabaseManager::extractShape(sqlite3_stmt *stmt) {
+    const unsigned char* type = sqlite3_column_text(stmt, 0);
+    double param1 = sqlite3_column_double(stmt, 1);
+    double param2 = sqlite3_column_double(stmt, 2);
+    double param3 = sqlite3_column_double(stmt, 3);
+    double area = sqlite3_column_double(stmt, 4);
+    double perimeter = sqlite3_column_double(stmt, 5);
+
+    std::string typeStr = reinterpret_cast<const char*>(type);
+    ShapeType shapeType = stringToShapeType(typeStr);
+
+    switch (shapeType) {
+        case ShapeType::Circle:
+            return std::make_shared<Circle>(*shapeFactory->createCircle(param1, area, perimeter));
+        case ShapeType::Rectangle:
+            return std::make_shared<Rectangle>(*shapeFactory->createRectangle(param1, param2, area, perimeter));
+        case ShapeType::Triangle:
+            return std::make_shared<Triangle>(*shapeFactory->createTriangle(param1, param2, param3, area, perimeter));
+        default:
+            std::cerr << "Unknown type" << std::endl;
+            return  nullptr;
+    }
+}
+
 bool DatabaseManager::initTable() {
     const char* sql = R"(
         CREATE TABLE IF NOT EXISTS figures(
@@ -34,7 +60,9 @@ bool DatabaseManager::initTable() {
         type TEXT NOT NULL,
         param1 REAL,
         param2 REAL,
-        param3 REAL,);
+        param3 REAL,
+        area REAL,
+        perimeter REAL);
     )";
 
     return executeQuery(sql);
@@ -47,6 +75,8 @@ bool DatabaseManager::saveShape(Shape *shape) {
     ShapeType shapeType = shape->getType();
     std::string typeStr = shapeTypeToString(shapeType);
     double p1 = 0, p2 = 0, p3 = 0;
+    double area = shape->getArea();
+    double perimeter = shape->getPerimeter();
 
     switch (shapeType) {
         case ShapeType::Circle: {
@@ -76,8 +106,8 @@ bool DatabaseManager::saveShape(Shape *shape) {
     }
 
     const std::string sql = R"(
-        INSERT INTO figures(type,param1,param2,param3)
-        VALUES(?,?,?,?);)";
+        INSERT INTO figures(type,param1,param2,param3,area,perimeter)
+        VALUES(?,?,?,?,?,?);)";
 
     sqlite3_stmt* stmt;
     int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
@@ -90,6 +120,8 @@ bool DatabaseManager::saveShape(Shape *shape) {
     sqlite3_bind_double(stmt, 2, p1);
     sqlite3_bind_double(stmt, 3, p2);
     sqlite3_bind_double(stmt, 4, p3);
+    sqlite3_bind_double(stmt, 5, area);
+    sqlite3_bind_double(stmt, 6, perimeter);
 
     rc = sqlite3_step(stmt);
     bool success = (rc == SQLITE_DONE);
@@ -101,13 +133,25 @@ bool DatabaseManager::saveShape(Shape *shape) {
     return success;
 }
 
-bool DatabaseManager::loadShape(int id) {
+std::shared_ptr<Shape> DatabaseManager::loadShape(int id) {
+    std::shared_ptr<Shape> shape;
+    std::string sql = "SELECT type, param1, param2, param3, area, perimeter FROM figures WHERE id = ?;";
 
+    sqlite3_stmt* stmt;
+    int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Cannot prepare statement: " << sqlite3_errmsg(db) << std::endl;
+        return shape;
+    }
+
+    shape = extractShape(stmt);
+    sqlite3_finalize(stmt);
+    return shape;
 }
 
 std::vector<std::shared_ptr<Shape>> DatabaseManager::loadAllShapes() {
     std::vector<std::shared_ptr<Shape>> shapes;
-    std::string sql = "SELECT type, param1, param2, param3 FROM figures";
+    std::string sql = "SELECT type, param1, param2, param3, area, perimeter FROM figures";
 
     sqlite3_stmt* stmt;
     int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
@@ -117,28 +161,7 @@ std::vector<std::shared_ptr<Shape>> DatabaseManager::loadAllShapes() {
     }
 
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        const unsigned char* type = sqlite3_column_text(stmt, 0);
-        double param1 = sqlite3_column_double(stmt, 1);
-        double param2 = sqlite3_column_double(stmt, 2);
-        double param3 = sqlite3_column_double(stmt, 3);
-
-        std::string typeStr = reinterpret_cast<const char*>(type);
-        ShapeType shapeType = stringToShapeType(typeStr);
-
-        switch (shapeType) {
-            case ShapeType::Circle:
-                shapes.push_back(std::make_shared<Circle>
-                    (param1, nullptr, nullptr));
-                break;
-            case ShapeType::Rectangle:
-                shapes.push_back(std::make_shared<Rectangle>
-                    (param1, param2, nullptr, nullptr));
-                break;
-            case ShapeType::Triangle:
-                shapes.push_back(std::make_shared<Triangle>
-                    (param1, param2, param3, nullptr, nullptr));
-                break;
-        }
+        shapes.push_back(extractShape(stmt));
     }
 
     sqlite3_finalize(stmt);

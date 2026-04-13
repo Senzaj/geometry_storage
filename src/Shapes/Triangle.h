@@ -5,8 +5,9 @@
 
 class Triangle: public Shape {
 public:
-    explicit Triangle (double aSide, double bSide, double cSide,
+    explicit Triangle (int id, double aSide, double bSide, double cSide,
         AreaCalculator* areaCalculator, PerimeterCalculator* perimeterCalculator);
+    explicit Triangle (int id, double aSide, double bSide, double cSide, double area, double perimeter);
 
     void accept(Calculator &calc) override;
 

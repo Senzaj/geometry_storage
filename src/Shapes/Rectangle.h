@@ -5,7 +5,8 @@
 
 class Rectangle: public Shape{
 public:
-    explicit Rectangle(double width, double height, AreaCalculator* areaCalculator, PerimeterCalculator* perimeterCalculator);
+    explicit Rectangle(int id, double width, double height, AreaCalculator* areaCalculator, PerimeterCalculator* perimeterCalculator);
+    explicit Rectangle(int id, double width, double height, double area, double perimeter);
 
     void accept(Calculator &calc) override;
 

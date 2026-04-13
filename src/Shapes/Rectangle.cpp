@@ -4,8 +4,7 @@
 
 #include "../Calculator/Calculator.h"
 
-Rectangle::Rectangle(double width, double height, AreaCalculator* areaCalculator, PerimeterCalculator* perimeterCalculator) {
-
+Rectangle::Rectangle(int id, double width, double height, AreaCalculator* areaCalculator, PerimeterCalculator* perimeterCalculator): Shape(id) {
     if (width <= 0 || height <= 0)
         throw std::invalid_argument("Both width and height must be positive");
 
@@ -14,6 +13,12 @@ Rectangle::Rectangle(double width, double height, AreaCalculator* areaCalculator
     Rectangle::accept(*perimeterCalculator);
     Rectangle::accept(*areaCalculator);
 }
+
+Rectangle::Rectangle(int id, double width, double height, double area, double perimeter): Shape(id, area, perimeter) {
+    this->width = width;
+    this->height = height;
+}
+
 
 double Rectangle::getWidth() const {
     return width;
