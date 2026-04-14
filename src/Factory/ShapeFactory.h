@@ -6,7 +6,7 @@
 
 class ShapeFactory {
 public:
-    explicit ShapeFactory(AreaCalculator areaCalculator, PerimeterCalculator perimeterCalculator, RandomGenerator randomGenerator);
+    explicit ShapeFactory(int startId, AreaCalculator areaCalculator, PerimeterCalculator perimeterCalculator, RandomGenerator randomGenerator);
     virtual ~ShapeFactory();
 
     Circle* createCircle(double radius) const;
@@ -18,7 +18,7 @@ public:
     Triangle* createTriangle(double sideA, double sideB, double sideC) const;
     Triangle* createTriangle(double sideA, double sideB, double sideC, double area, double perimeter) const;
 private:
-    Shape* createShape() const;
+    mutable int id = 0;
     AreaCalculator* areaCalculator;
     PerimeterCalculator* perimeterCalculator;
     RandomGenerator* randomGenerator;
